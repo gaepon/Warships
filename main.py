@@ -4,7 +4,7 @@ import bataille as bt
 import joueur as jr
 
 def main():
-    b=bt.Bataill(jr.Human("Joueur1"), jr.Human("Joueur2"))
+    b=bt.Bataille(jr.Human("Joueur1"), jr.Human("Joueur2"))
     while b.tour():
         pass
     exit(0)
