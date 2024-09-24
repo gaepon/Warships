@@ -51,9 +51,6 @@ def place(grille:list[list[int|Boat]], b_list:list[Boat], coor:tuple[int], b_typ
 	return []
 		
 def remove(grille, b_list, b):
-	#print("############# AVANT #############")
-	#for l in grille:
-	#	print(l)
 	b_list.pop(b_list.index(b))
 	b_length = b.type if b.type>=3 else b.type+1
 	v=0
@@ -63,9 +60,6 @@ def remove(grille, b_list, b):
 		h=0
 	for i in range(b_length):
 		grille[b.coor[1]+i*v][b.coor[0]+i*h]=0
-	#print("############# APRES #############")
-	#for l in grille:
-	#	print(l)
 	return grille
 	
 def place_alea(grille:list[list[int]], b_type:int, b_list:list[Boat]):

@@ -64,6 +64,7 @@ class Human(Joueur):
 class RandomAI(Joueur):
     pass
 
+
 class HeuristicAI(Joueur):
     def __init__(self, name):
         super().__init__(name)
@@ -96,5 +97,65 @@ class HeuristicAI(Joueur):
                     self.hits.append((coor[0]+j, coor[1]))
             print(self.hits, coor)
     
+    
 class ProbabilistAI(Joueur):
-    pass
+    def __init__(self, name):
+        super().__init__(name)
+        
+    def calcPosPos(self, b_type):
+        posPos=[[0 for _ in range(10)] for ₙ in range(10)]
+        for facing in ["v", "h"]:
+            v=0
+            h=1
+            if facing=="v":
+                v=1
+                h=0
+            y=0
+            while y<10:
+                x=0
+                while x<10:
+                    if self.peut_placer(self.shots, (x, y), b_type, facing):
+                        b_length = b_type if b_type>=3 else b_type+1
+                        for i in range(b_length):
+                            posPos[y+i*v][x+i*h]+=1
+                    x+=1
+                y+=1
+        return posPos
+    
+    def peut_placer(self, grille:list[list[int]], coor:tuple[int], b_type:int, facing:str)->bool:
+        y_length = len(grille)
+        x_length = len(grille[0])
+	
+        if not (1<=b_type<=5):
+            return False
+
+        if 0<=coor[0]<x_length and 0<=coor[1]<y_length:
+            if grille[coor[1]][coor[0]]!=0:
+                return False
+            i = 1
+            v=0
+            h=1
+            if facing=="v":
+                v=1
+                h=0
+            b_length = b_type if b_type>=3 else b_type+1
+            while i<b_length:
+                if coor[0]+i*h>=x_length or coor[1]+i*v>=y_length:
+                    return False
+                if grille[coor[1]+i*v][coor[0]+i*h]==-1:
+                    return False
+                i += 1
+            return True
+        return False
+    
+    def get_coor(self):
+        x=-1
+        y=-1
+        while not(0<=x<len(self.grille[0])) and x!=314:
+            x=int(input("x : "))
+        while not(0<=y<len(self.grille)) and y!=314:
+            y=int(input("y : "))
+        posPos=self.calcPosPos(5)
+        for l in posPos:
+            print(l)
+        return x, y

@@ -18,9 +18,8 @@ def main():
             j2=jr.HeuristicAI("Joueur2")
             n=False
         elif a=="4":
-            print("not yet implemented")
-            #j2=jr.ProbabilistAI("Joueur2")
-            #n=False
+            j2=jr.ProbabilistAI("Joueur2")
+            n=False
     b=bt.Bataille(jr.Human("Joueur1"), j2)
     while b.tour():
         pass
