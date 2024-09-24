@@ -1,11 +1,9 @@
 import sys
 import grid as gd
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QApplication, QWidget, QGridLayout, QMainWindow
+from PySide6.QtWidgets import QApplication, QWidget, QGridLayout, QMainWindow, QVBoxLayout, QLabel, QPushButton
+from PySide6.QtCore import Qt, Slot
 
-def printMat(mat):
-    for l in mat:
-        print(l)
 
 def hex_to_color(code):
     ch=code.replace("#","")
@@ -30,9 +28,9 @@ class GridCase(QWidget):
                 self.setPalette(p)
 
 class GridWidget(QWidget):
-    def __init__(self):
+    def __init__(self, grid):
         super().__init__()
-        self.grille, self.b_list = gd.genere_grille()
+        self.grille=grid
         self.color = ["#050505","#101044","#F1C40F","#2ECC71","#F39C12","#E74C3C","#5B2C6F"]
         l = QGridLayout()
         
@@ -57,15 +55,42 @@ class GridWidget(QWidget):
     def setGridCase(self, x, y, val):
         self.grille[y][x]=val
 
+class TurnScreen(QWidget):
+	def __init__(self, text, mainWindow):
+		super().__init__()
+		self.text=text
+		
+		l=QVBoxLayout(self)
+		t=QLabel()
+		t.setText(self.text)
+		t.setAlignment(Qt.AlignCenter)
+		b=QPushButton("Next")
+		b.clicked.connect(mainWindow.nextWidget)
+		
+		l.addWidget(t)
+		l.addWidget(b)
+		self.setLayout(l)
+
 class GUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setFixedSize(600,600)
         self.setWindowTitle("WARSHIPS !")
+	
+        self.i=0
+        g, l=gd.genere_grille()
+        w1 = GridWidget(g)
+        s1 = TurnScreen("Player 1", self)
+        self.widList = [s1, w1]
+    
+        self.setCentralWidget(self.widList[0])
 
-        w = GridWidget()
+    @Slot()
+    def nextWidget(self):
+        self.i+=1
+        self.setCentralWidget(self.widList[self.i%len(self.widList)])
+        self.update()
 
-        self.setCentralWidget(w)
 
 app=QApplication()
 w=GUI()
