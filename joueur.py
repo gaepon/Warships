@@ -55,3 +55,12 @@ class Human(Joueur):
         return x, y
 #a=Human("t")
 #print(a.getName())
+
+class RandomAI(Joueur):
+    pass
+
+class HeuristicAI(Joueur):
+    pass
+    
+class ProbabilistAI(Joueur):
+    pass
