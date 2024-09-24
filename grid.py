@@ -72,7 +72,7 @@ def place_alea(grille:list[list[int]], b_type:int, b_list:list[Boat]):
 	n_grille=[]
 	while n_grille==[]:
 		facing="h" if randint(0,1) else "v"
-		n_grille=place(grille, b_list, (randint(0, len(grille[0])), randint(0, len(grille))), b_type, facing)
+		n_grille=place(grille, b_list, (randint(0, len(grille[0])-1), randint(0, len(grille)-1)), b_type, facing)
 	return n_grille
 
 
