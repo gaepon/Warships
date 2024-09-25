@@ -107,6 +107,9 @@ class Screen(QWidget):
         self.g2 = DualGrid(j2, p=self)
         self.ps2 = TurnScreen(j2.getName(), p=self)
         
+        self.ps1.resize(1230, 620)
+        self.ps2.resize(1230, 620)
+
         self.g1.hide()
         self.g2.hide()
         self.ps2.hide()
@@ -120,7 +123,6 @@ class Screen(QWidget):
         for y in range(len(widList)):
             if y!=self.i%4:
                 widList[y%len(widList)].hide()
-        self.update()
 
 class GUI(QMainWindow):
     def __init__(self, j1, j2):
