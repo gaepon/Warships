@@ -6,30 +6,33 @@ class Bataille:
         self.js=[j1, j2]
         self.turn=0
 
-    def tour(self):
+    def tour(self, noShow):
         j=self.js[self.turn%2]
         j2=self.js[(self.turn+1)%2]
         coor=j.get_coor()
-        if coor[0]==314:
-            gd.affiche(j.getGrid())
-            coor=(0,coor[1])
-        if coor[1]==314:
-            gd.affiche(j2.getGrid())
-            coor=(coor[0],0)
+        if not noShow:
+            if coor[0]==314:
+                gd.affiche(j.getGrid())
+                coor=(0,coor[1])
+            if coor[1]==314:
+                gd.affiche(j2.getGrid())
+                coor=(coor[0],0)
         res=j2.attack(coor, j)
-        if res==0:
-            print("Rate !\n")
-        elif res==1:
-            print("Touche !\n")
-        elif res==2:
-            print("Coule !\n")
-        else:
-            print("Coule_d !\n")
-            return self.end(j)
-        gd.affiche(j.getShots())
+        if not noShow:
+            if res==0:
+                print("Rate !\n")
+            elif res==1:
+                print("Touche !\n")
+            elif res in [2, 3]:
+                print("Coule !\n")
+        if res==3:
+            return self.end(j, noShow)
+        if not noShow:
+            gd.affiche(j.getShots())
         self.turn+=1
         return 1
 
-    def end(self, victor):
-        print(f"{victor.getName()} a gagne")
+    def end(self, victor, noShow):
+        if not noShow:
+            print(f"{victor.getName()} a gagne")
         return 0

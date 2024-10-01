@@ -17,10 +17,14 @@ class Joueur:
         self.grille, self.b_list=gd.genere_grille()
         self.shots=[[0 for _ in range(10)] for ᄑ in range(10)]
         self.name=name
+        self.nb_coup=0
 	
     def getCoor(self):
         pass
     
+    def getNbCoup(self):
+        return self.nb_coup
+
     def getGrid(self):
         return self.grille
 
@@ -64,8 +68,8 @@ class Joueur:
         self.shots[coor[1]][coor[0]]=val
 
     def isDead(self):
-        for i in range(len(self.b_list)):
-            if self.b_list[i].getDeath()==0:
+        for b in self.b_list:
+            if b.getDeath()==0:
                 return 0
         return 1
 
@@ -81,6 +85,7 @@ class Human(Joueur):
             x=int(input("x : "))
         while not(0<=y<len(self.grille)) and y!=314:
             y=int(input("y : "))
+        self.nb_coup+=1
         return x, y
 #a=Human("t")
 #print(a.getName())
@@ -92,11 +97,12 @@ class RandomAI(Joueur):
     def get_coor(self):
         max_x=len(self.grille[0])
         max_y=len(self.grille)
-        c=0
+        c=1
         while c!=0:
             x=randint(0, max_x-1)
             y=randint(0, max_y-1)
             c=self.shots[y][x]
+        self.nb_coup+=1
         return x, y
 
 
@@ -108,17 +114,22 @@ class HeuristicAI(Joueur):
     def get_coor(self):
         max_x=len(self.grille[0])
         max_y=len(self.grille)
-        if self.hits==[]:
-            c=0
+        x=-1
+        y=-1
+        ncoor=False
+
+        if self.hits!=[]:
+            while (not(0<=x<max_x) or not(0<=y<max_y)):
+                if len(self.hits)==0:
+                    ncoor=True 
+                x, y=self.hits.pop()
+        if self.hits==[] or ncoor:
+            c=1
             while c!=0:
                 x=randint(0, max_x-1)
                 y=randint(0, max_y-1)
                 c=self.shots[y][x]
-        else:
-            x=-1
-            y=-1
-            while not(0<=x<max_x) or not(0<=y<max_y): 
-                x, y=self.hits.pop()
+        self.nb_coup+=1
         return x, y
     
     def setShots(self, coor, val, res):
@@ -181,7 +192,7 @@ class ProbabilistAI(Joueur):
             return False
 
         if 0<=coor[0]<x_length and 0<=coor[1]<y_length:
-            if grille[coor[1]][coor[0]]!=0:
+            if grille[coor[1]][coor[0]]==-1 or grille[coor[1]][coor[0]]==2:
                 return False
             i = 1
             v=0
@@ -190,13 +201,13 @@ class ProbabilistAI(Joueur):
                 v=1
                 h=0
             b_length = b_type if b_type>=3 else b_type+1
-            while i<b_length:
+            for i in range(b_length):
                 if coor[0]+i*h>=x_length or coor[1]+i*v>=y_length:
                     return False
                 case = grille[coor[1]+i*v][coor[0]+i*h]
                 if case==-1 or case==2:
                     return False
-                i += 1
+
             return True
         return False
     
@@ -208,6 +219,21 @@ class ProbabilistAI(Joueur):
         posPos = [[0 for _ in range(10)] for ᖙ in range(10)]
         for i in self.targets:
             posPos = np.add(posPos, self.calcPosPos(i))
-        print(np.array(posPos))
+        #print("posPos : ", np.array(posPos))
         ind = np.where(np.array(posPos) == np.max(posPos))
-        return ind[1][0], ind[0][0]
+        self.nb_coup+=1
+        return int(ind[1][0]), int(ind[0][0])
+
+class BrainDead(Joueur):
+    def __init__(self):
+        super().__init__("Bob")
+    
+    def get_coor(self):
+        return 0, 0
+
+if __name__=="__main__":
+    m=np.array([[0,-1,-1,0,-1,0,0,-1,-1,0],[-1,-1,0,-1,2,2,2,-1,0,-1],[-1,0,-1,2,0,-1,-1,0,-1,0],[0,-1,0,2,-1,2,0,-1,-1,0],[-1,-1,0,2,-1 ,2,-1 ,1 ,0,-1],[-1 ,0,-1, 2,-1 , 2 , 0 , 0 ,-1 , 0],[ 0 ,-1 , 0 , 2 , 0 , 2 ,-1 , 0 , 0 ,-1],[-1 ,-1,  0,  0, -1,  0,  0, -1,  0,  0],[ 0 , 0 ,-1,  0,  0, -1,  0,  0, -1,  0],[ 1,  1,  0, -1,  0,  0, -1,  0,  0, -1]])
+    j1=ProbabilistAI("TestAI")
+    print(j1.peut_placer(m, (0, 9), 3, "h"))
+    print(j1.peut_placer(m, (0, 9), 2, "h"))
+    print(j1.peut_placer(m, (0, 9), 1, "h"))

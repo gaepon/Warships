@@ -37,4 +37,5 @@ class Boat:
         return self.dead
 	
     def __str__(self):
-        return f"Boat : {self.coor}, {self.type}, {self.facing}, {"sunk" if self.dead else "afloat"}"
+        c = "sunk" if self.dead else "afloat"
+        return f"Boat : {self.coor}, {self.type}, {self.facing}, {c}"
