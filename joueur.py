@@ -201,16 +201,8 @@ class ProbabilistAI(Joueur):
         return False
     
     def someoneGotSunk(self, boat : bt.Boat):
-            v=0
-            h=1
-            if boat.getFacing()=="v":
-                v=1
-                h=0
-            x, y = boat.get_coor()
-            self.targets.pop(self.targets.index(boat.get_b_type()))
-            b_length = boat.get_b_type() if boat.get_b_type()>=3 else boat.get_b_type()+1
-            for i in range(b_length):
-                self.shots[y+i*v][x+i*h]=2
+        super().someoneGotSunk(boat)
+        self.targets.pop(self.targets.index(boat.get_b_type()))
 
     def get_coor(self):
         posPos = [[0 for _ in range(10)] for ᖙ in range(10)]
@@ -218,5 +210,4 @@ class ProbabilistAI(Joueur):
             posPos = np.add(posPos, self.calcPosPos(i))
         print(np.array(posPos))
         ind = np.where(np.array(posPos) == np.max(posPos))
-        print(ind[0][0], ind[1][0], " | max : ", np.max(posPos))
         return ind[1][0], ind[0][0]
