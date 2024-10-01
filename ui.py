@@ -121,7 +121,7 @@ class Screen(QWidget):
         widList=[self.ps1, self.g1, self.ps2, self.g2]
         widList[self.i%len(widList)].show()
         for y in range(len(widList)):
-            if y!=self.i%4:
+            if y!=self.i%len(widList):
                 widList[y%len(widList)].hide()
 
 class GUI(QMainWindow):

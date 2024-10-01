@@ -27,6 +27,9 @@ class Boat:
     def get_coor(self):
         return self.coor
 		
+    def getFacing(self):
+        return self.facing
+
     def get_b_type(self):
         return self.type
 
