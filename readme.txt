@@ -13,9 +13,7 @@ options :
 
 To launch with GUI :
     >$ python3 mainGUI.py
-
-To launch GUI tests :
-    >$ python3 ui.py
+The game is only playable between two human players if you use the GUI
 
 To launch statistic tests :
     >$ python3 projectStats.py
