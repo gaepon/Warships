@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication
 def main():
     j=[pl.Human("Joueur1"), pl.Human("Joueur2")]
     app=QApplication()
-    w=ui.GUI(j)
+    w=ui.GUI(j, app)
     w.show()
     sys.exit(app.exec())
 

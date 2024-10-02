@@ -127,42 +127,62 @@ class Screen(QWidget):
         
         self.g1 = DualGrid(j1, p, p=self)
         self.ps1 = TurnScreen(j1.getName(), p=self)
-        self.st1 = TurnScreen("", p=self)
         self.g2 = DualGrid(j2, p, p=self)
         self.ps2 = TurnScreen(j2.getName(), p=self)
-        self.st2 = TurnScreen("", p=self)
         
         self.ps1.resize(1230, 620)
         self.ps2.resize(1230, 620)
 
         self.g1.hide()
         self.g2.hide()
-        self.st1.hide()
-        self.st2.hide()
         self.ps2.hide()
         self.ps1.show()
 
     @Slot()
     def nextWidget(self) -> None:
         self.i+=1
-        widList=[self.ps1, self.g1, self.st1, self.ps2, self.g2, self.st2]
+        widList=[self.ps1, self.g1, self.ps2, self.g2]
         widList[self.i%len(widList)].show()
         for y in range(len(widList)):
             if y!=self.i%len(widList):
                 widList[y%len(widList)].hide()
     
+    def getNextWidget(self) -> QWidget:
+        widList=[self.ps1, self.g1, self.ps2, self.g2]
+        return widList[(self.i+1)%len(widList)]
+
     def updateAll(self) -> None:
         self.g1.updateAll()
         self.g2.updateAll()
         self.update()
 
+class EndScreen(QWidget):
+    def __init__(self, text:str, app, p:QWidget=None):
+        super().__init__(parent=p)
+        self.label=QLabel(parent=self)
+        self.app=app
+		
+        l=QVBoxLayout(self)
+        self.label.setText(f"{text} won")
+        self.label.setAlignment(Qt.AlignCenter)
+        b=QPushButton("Close", parent=self)
+        b.clicked.connect(self.closeWindow)
+		
+        l.addWidget(self.label)
+        l.addWidget(b)
+        self.setLayout(l)
+    
+    def closeWindow(self, app:QApplication) -> None:
+        sys.exit()
+
 class GUI(QMainWindow):
-    def __init__(self, j:list[pl.Joueur]):
+    def __init__(self, j:list[pl.Joueur], app):
         super().__init__()
         self.setFixedSize(1230,620)
         self.setWindowTitle("WARSHIPS !")
         self.turn=0
         self.j=j
+        self.app=app
 
         self.w=Screen(j[0], j[1], p=self)
     
@@ -172,14 +192,15 @@ class GUI(QMainWindow):
         j1=self.j[self.turn%2]
         j2=self.j[(self.turn+1)%2]
         res=j2.attack(coord, j1)
+        ts=self.w.getNextWidget()
         if res==0:
-            pass
+            ts.setText("Miss")
         elif res==1:
-            pass
+            ts.setText("Hit")
         elif res==2:
-            pass
-        else:
-            pass
+            ts.setText("Sunk")
+        elif res==3:
+            self.setCentralWidget(EndScreen(j1.getName(), self.app))
         self.w.updateAll()
         self.w.nextWidget()
         self.turn+=1
@@ -188,6 +209,6 @@ if __name__=="__main__":
     app=QApplication()
     j1=pl.Human("J1")
     j2=pl.Human("J2")
-    w=GUI([j1, j2])
+    w=GUI([j1, j2], app)
     w.show()
     sys.exit(app.exec())
