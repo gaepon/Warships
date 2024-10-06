@@ -105,12 +105,19 @@ class Joueur:
         self.shots[coor[1]][coor[0]]=val
 
     def isDead(self):
+        """
+        OUT : int
+        check if the player lost
+        """
         for b in self.b_list:
             if b.getDeath()==0:
                 return 0
         return 1
 
 class Human(Joueur):
+    """
+    A class represening a human player with manual inputs
+    """
     def __init__(self, name):
         super().__init__(name)
 	
@@ -125,6 +132,9 @@ class Human(Joueur):
         return x, y
 
 class RandomAI(Joueur):
+    """
+    A class representing an AI which will shoot randomly without shooting the same space twice
+    """
     def __init__(self, name):
         super().__init__(name)
     
@@ -141,6 +151,10 @@ class RandomAI(Joueur):
 
 
 class HeuristicAI(Joueur):
+    """
+    A class representing an AI which will shoot randomly without shooting the same space twice
+    But that will inspect the neighbouring places in case of a hit
+    """
     def __init__(self, name):
         super().__init__(name)
         self.hits=[]
@@ -178,6 +192,9 @@ class HeuristicAI(Joueur):
     
     
 class ProbabilistAI(Joueur):
+    """
+    A class representing an AI that will calculate the place with the higher whance of containing a boat
+    """
     def __init__(self, name):
         super().__init__(name)
         self.targets = [1,2,3,4,5]
@@ -259,6 +276,9 @@ class ProbabilistAI(Joueur):
         return int(ind[1][0]), int(ind[0][0])
 
 class BrainDead(Joueur):
+    """
+    An AI that will always shoot at (0,0). We named it Bob.
+    """
     def __init__(self):
         super().__init__("Bob")
     
