@@ -13,42 +13,79 @@ HITSTATES :
 """
     
 class Joueur:
+    """
+    Represents a player, has empty methods
+    """
     def __init__(self, name):
         self.grille, self.b_list=gd.genere_grille()
         self.shots=[[0 for _ in range(10)] for ᄑ in range(10)]
         self.name=name
         self.nb_coup=0
 	
-    def getCoor(self):
+    def getCoor(self) -> tuple[int]:
+        """
+        Get target coordinates
+        """
         pass
     
-    def getNbCoup(self):
+    def getNbCoup(self) -> int:
+        """
+        Get how many turn this player played
+        """
         return self.nb_coup
 
-    def getGrid(self):
+    def getGrid(self) -> list[list[int]]:
+        """
+        Get the ships grid
+        """
         return self.grille
 
-    def getShots(self):
+    def getShots(self) -> list[list[int]]:
+        """
+        Get the past shots grid
+        """
         return self.shots
     
-    def setShots(self, x, y, val):
+    def setShots(self, x:int, y:int, val:int):
+        """
+        Set the value of (x, y) in the shots grid
+        """
         self.shots[y][x]=val
 
     def getName(self):
+        """
+        What is your name ?
+        (What is your quest ?)
+        (What is your favourite color ?)
+        """
         return self.name
     
-    def someoneGotSunk(self, boat : bt.Boat):
+    def someoneGotSunk(self, boat : bt.Boat) -> None:
+        """
+        Sets a boat in the shots grid at 2, to indicate that it's sunk
+        """
         v=0
         h=1
         if boat.getFacing()=="v":
             v=1
             h=0
+        
         x, y = boat.get_coor()
         b_length = boat.get_b_type() if boat.get_b_type()>=3 else boat.get_b_type()+1
+
         for i in range(b_length):
             self.shots[y+i*v][x+i*h]=2
 
-    def attack(self, coor, j2):
+    def attack(self, coor:tuple[int], j2):
+        """
+        IN : tuple[int], Joueur
+        Out : int
+        self gets attacked by j2 in coor, the function returns:
+        0 if it's a miss
+        1 if it's a hit
+        2 if the boat is sunk
+        3 if self lost
+        """
         if self.grille[coor[1]][coor[0]]!=0:
             b_type=self.grille[coor[1]][coor[0]]
             self.grille[coor[1]][coor[0]]=-1
@@ -76,19 +113,16 @@ class Joueur:
 class Human(Joueur):
     def __init__(self, name):
         super().__init__(name)
-        #print(self.grille)
 	
     def get_coor(self):
         x=-1
         y=-1
-        while not(0<=x<len(self.grille[0])) and x!=314:
+        while not(0<=x<len(self.grille[0])):
             x=int(input("x : "))
-        while not(0<=y<len(self.grille)) and y!=314:
+        while not(0<=y<len(self.grille)):
             y=int(input("y : "))
         self.nb_coup+=1
         return x, y
-#a=Human("t")
-#print(a.getName())
 
 class RandomAI(Joueur):
     def __init__(self, name):

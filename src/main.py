@@ -39,7 +39,7 @@ def main():
                 j2=jr.Human("Joueur2")
                 n=False
             elif a=="2":
-                j2=jr.RandomAI()
+                j2=jr.RandomAI("Joueur2")
                 n=False
             elif a=="3":
                 j2=jr.HeuristicAI("Joueur2")
@@ -48,7 +48,7 @@ def main():
                 j2=jr.ProbabilistAI("Joueur2")
                 n=False
         b=bt.Bataille(jr.Human("Joueur1"), j2)
-        while b.tour():
+        while b.tour(ns):
             pass
     exit(0)
 
