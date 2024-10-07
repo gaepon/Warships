@@ -1,5 +1,7 @@
 from boat import Boat
+from random import random, randint
 import grid as gd
+import numpy as np
 
 def pl_possibles(b_type, grille=[], taille_g=10):
 	if grille==[]:
@@ -19,12 +21,12 @@ def pl_possibles(b_type, grille=[], taille_g=10):
 				x+=1
 			y+=1
 	return n
-
+"""
 print(pl_possibles(5))
 print(pl_possibles(4))
 print(pl_possibles(3))
 print(pl_possibles(2))
-print(pl_possibles(1))
+print(pl_possibles(1))"""
 #print(pl_possibles(1, [[0,0]]))
 
 def pl_possibles_liste(taille_g, b_type_list):
@@ -78,9 +80,9 @@ def pl_possibles_liste(taille_g, b_type_list):
 			
 	return n
 
-print(pl_possibles_liste(10, [5]))
-print(pl_possibles_liste(10, [5, 1, 2]))
-print(pl_possibles_liste(10, [4, 3]))
+#print(pl_possibles_liste(10, [5]))
+#print(pl_possibles_liste(10, [5, 1, 2]))
+#print(pl_possibles_liste(10, [4, 3]))
 
 def while_true(g1):
 	power=0
@@ -94,4 +96,71 @@ def while_true(g1):
 		attempt+=1
 	return attempt
 
-print(while_true(gd.genere_grille()))
+#print(while_true(gd.genere_grille()))
+
+
+def randomDetect(grid:list[list[int]], probaSensor:float, coor:tuple[int]) -> bool:
+	if grid[coor[1]][coor[0]]!=0:
+		return probaSensor>random()
+	return False
+
+def selectCoorGrid(probaGrid:list[list[float]]):
+	ind=np.where(np.isclose(np.array(probaGrid), np.max(probaGrid)))
+	return int(ind[1][0]), int(ind[0][0])
+
+def bayeSearch(grid:list[list[int]], probaSensor:float, probaGrid=[])-> tuple:
+	"""
+	OUT : tuple[int], int
+	Retourne les coordonnées de l'objet et le nombre de détections éffectuées
+	"""
+	assert len(grid)>0
+	assert len(grid[0])>0
+
+	n=1
+
+	if probaGrid==[]:
+		probaGrid=[[1/(len(grid)*len(grid[0])) for _ in range(len(grid[0]))] for __ in range(len(grid))]
+
+	coor = selectCoorGrid(probaGrid)
+
+	while not randomDetect(grid, probaSensor, coor):
+		n+=1
+		pi_k = probaGrid[coor[1]][coor[0]]
+		for j in range(len(grid)):
+			for i in range(len(grid[0])):
+				pi_i = probaGrid[j][i]
+				if i!=coor[0] or j!=coor[1]:
+					probaGrid[j][i]=pi_i/(1-(probaSensor*pi_k))
+				else :
+					probaGrid[j][i]=((1-probaSensor)*pi_k)/(1-(probaSensor*pi_k))
+		
+		#print(coor)
+		#print(np.sum(probaGrid))
+		#print(np.array(probaGrid))
+		coor = selectCoorGrid(probaGrid)
+	
+	return coor, n
+
+print("small grid")
+print(bayeSearch([[0, 0, 1], [0, 0, 0], [0, 0, 0]], 0.8))
+print(bayeSearch([[0, 0, 1], [0, 0, 0], [0, 0, 0]], 0.1))
+
+print("\n\nMedium grid")
+medium_list = [[0 for _ in range(10)] for __ in range(10)]
+x=randint(0, 9)
+y=randint(0, 9)
+medium_list[y][x]=1
+print(f"1 placed in ({x}, {y})")
+print(bayeSearch(medium_list, 0.8))
+print(bayeSearch(medium_list, 0.5))
+print(bayeSearch(medium_list, 0.1))
+
+print("\n\nBig grid")
+big_list = [[0 for _ in range(100)] for __ in range(100)]
+x=randint(0, 99)
+y=randint(0, 99)
+big_list[y][x]=1
+print(f"1 placed in ({x}, {y})")
+print(bayeSearch(big_list, 0.8))
+#print(bayeSearch(big_list, 0.5))
+#print(bayeSearch(big_list, 0.1))
